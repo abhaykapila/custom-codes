@@ -1,0 +1,94 @@
+<div id="overlay" class=""></div>
+<div class="inline-cart" id="slidingcartmain">
+  <form action="{{ routes.cart_url }}" method="post">
+    <div class="cart-header">
+      <h3>SHOPPING BAG</h3>
+      <div class="close-cart-img">
+        <p><svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 40 40"><path d="M23.868 20.015L39.117 4.78c1.11-1.108 1.11-2.77 0-3.877-1.109-1.108-2.773-1.108-3.882 0L19.986 16.137 4.737.904C3.628-.204 1.965-.204.856.904c-1.11 1.108-1.11 2.77 0 3.877l15.249 15.234L.855 35.248c-1.108 1.108-1.108 2.77 0 3.877.555.554 1.248.831 1.942.831s1.386-.277 1.94-.83l15.25-15.234 15.248 15.233c.555.554 1.248.831 1.941.831s1.387-.277 1.941-.83c1.11-1.109 1.11-2.77 0-3.878L23.868 20.015z" class="layer"></path></svg></p>
+      </div>
+    </div>
+    {% if cart.item_count == 0 %}
+    <p class="empty-cart-title international-cart-element" data-empty-cart="">Your cart is empty.</p>
+    {% else %}
+
+    <div data-cart-contents="">
+      <div class="line-item-container">
+        {% for item in cart.items %}
+        <div class="line-item">
+          <div class="line-item-image">
+            <a href="{{ item.url }}">
+              <img alt="{{ item.image.alt | escape }}" src="{{ item | img_url: 'original' }}">
+            </a>
+          </div>
+          <div class="line-item-content">
+            <h4 class="line-item-title"><a href="{{ item.url }}">{{ item.title }}</a></h4>
+            <div class="cart__meta-text">
+              {% for option in item.product.options %}
+              {{ option }}: {{ item.variant.options[forloop.index0] }}<br/>
+              {% endfor %}
+            </div>
+            
+            <div class="another_insct cart__meta-text">
+              {% for p in item.properties %}
+              {% unless p.last == blank %}
+              {{ p.first }}:
+
+              {% comment %}
+              Check if there was an uploaded file associated
+              {% endcomment %}
+              {% if p.last contains '/uploads/' %}
+              <a href="{{ p.last }}">{{ p.last | split: '/' | last }}</a>
+              {% else %}
+              {{ p.last }}
+              {% endif %}
+              <br/>
+              {% endunless %}
+              {% endfor %}
+            </div>
+            
+            <div class="line-item-price">
+              {% comment %}
+              {% if item.variant.compare_at_price > item.price %}
+              <span class="strikeprice money">{{ item.variant.compare_at_price | money }}</span>
+              {% endif %}
+              {% endcomment %}
+              <span class="flow-price"><span class="Bold-theme-hook-DO-NOT-DELETE bold_cart_item_price" style="display:none !important;"></span>{{ item.price | money }}</span>
+             {% comment %} 
+              <div class="yousavepricesliding yousaveprice">
+                {% if item.variant.compare_at_price > item.price %}You save {{ item.variant.compare_at_price | minus: item.price | times: 100.0 | divided_by: item.variant.compare_at_price | money_without_currency | times: 100 | remove: '.0'}}%{% endif %}
+              </div>
+              {% endcomment %}
+               
+              <div class="cart__qty">
+                <label for="updates_large_{{ item.key }}" class="cart__qty-label">{{ 'cart.label.quantity' | t }}</label>
+                <input class="changequantity cart__qty-input" type="number" name="updates[]" id="updates_large_{{ item.key }}" value="{{ item.quantity }}" data-line-item-variant-id="{{ item.variant.id }}" data-line-item-index="{{ forloop.index }}" min="0" pattern="[0-9]*" data-quantity-item="{{ 1 }}">
+              </div>
+            </div>
+            <a rel="{{ item.id }}" class="remove-item" onclick="remove({{ forloop.index  }},0)">Remove</a> 
+          </div>
+
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <a href="#" class="button btn-continue-shopping international-cart-element" data-empty-cart="" style="display: none;"><span>Continue Shopping</span></a>
+    {% endif %}
+    <div data-full-cart="" class="subtotal-block international-cart-element" style="display: block;"> 
+      {% if cart.item_count < 1 %}
+      <a href="/collections/all" class="button btn-checkout continueshopping"><span>Continue Shopping</span></a>
+      {% else %}
+      <div class="subtotal">
+        <div>Subtotal:</div>
+        <div class="cart-total">
+          <span class="cart-subtotal money"><span class="Bold-theme-hook-DO-NOT-DELETE bold_cart_total" style="display:none !important;"></span>{{ cart.total_price | money }}</span>
+        </div>
+      </div>
+
+      <button type="submit" name="checkout" class="button btn-checkout"><span style="vertical-align: middle !important;">CHECK OUT →</span></button>
+      <a class="outline-button" href="/cart"><span>View Cart</span></a>
+   {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </form>
+</div>
