@@ -7,11 +7,11 @@ jQuery(document).ready(function () {
       }
     });
   
-    jQuery('.scroll-top').click(function () {
+    jQuery('.scroll-top').click(function() {
       jQuery("html, body").animate({
         scrollTop: 0
       }, 300);
-        return false;
+      return false;
     });
   
   });
